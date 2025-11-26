@@ -31,7 +31,8 @@
         import { getFirestore, collection, onSnapshot, setDoc, doc, query, orderBy, getDocs, limit, addDoc, serverTimestamp, deleteDoc, updateDoc } from 'firebase/firestore';
         import { 
             AlertTriangle, Map as MapIcon, Utensils, ShoppingBag, Landmark, Briefcase, 
-            Plane, Euro, Plus, User, Trash2, CheckSquare, Edit, Save, X, RotateCcw 
+            Plane, Euro, Plus, User, Trash2, CheckSquare, Edit, Save, X, RotateCcw,
+            Wallet, ArrowDownCircle, ArrowUpCircle 
         } from 'lucide-react';
 
         // --- CONSTANTS ---
@@ -56,35 +57,35 @@
             { day: 1, date: '12/18', location: '那霸市區', activities: [
                 { time: '13:20', type: 'TRANSPORT', name: '抵達桃園機場辦理登機', guide: '請預留充裕時間前往桃園機場第一航廈樂桃航空櫃檯辦理登機手續與行李托運。' },
                 { time: '15:20', type: 'TRANSPORT', name: '桃園機場 MM926' },
-                { time: '17:50', type: 'TRANSPORT', name: '抵達那霸機場', details: { name_jp: '那覇空港', location_link: 'https://maps.app.goo.gl/tWp71D3Qy8vF5Q8K7' } },
-                { time: '18:15', type: 'HOTEL', name: '住宿：那霸西鐵渡假客棧', details: { name_jp: '西鉄リゾートイン那覇', location_link: 'https://maps.app.goo.gl/JqFf2M9zV6p7D8r4A' } },
-                { time: '20:30', type: 'FOOD', name: '晚餐：焼肉 琉球の牛 （那覇久茂地店）', details: { name_jp: '焼肉 琉球の牛 (那覇久茂地店)', address: '那霸市久茂地 3-29-23', phone: '098-951-3323', guide: '推薦特選和牛六種盛り', location_link: 'https://maps.app.goo.gl/yTjT5893F7pQj3zJ7' } },
+                { time: '17:50', type: 'TRANSPORT', name: '抵達那霸機場', details: { name_jp: '那覇空港', location_link: 'https://www.google.com/maps/search/?api=1&query=那覇空港' } },
+                { time: '18:15', type: 'HOTEL', name: '住宿：那霸西鐵渡假客棧', details: { name_jp: '西鉄リゾートイン那覇', location_link: 'https://www.google.com/maps/search/?api=1&query=西鉄リゾートイン那覇' } },
+                { time: '20:30', type: 'FOOD', name: '晚餐：焼肉 琉球の牛 （那覇久茂地店）', details: { name_jp: '焼肉 琉球の牛 (那覇久茂地店)', address: '那霸市久茂地 3-29-23', phone: '098-951-3323', guide: '推薦特選和牛六種盛り', location_link: 'https://www.google.com/maps/search/?api=1&query=焼肉+琉球の牛+那覇久茂地店' } },
             ]},
             { day: 2, date: '12/19', location: '中部', activities: [
-                { time: '08:00', type: 'TRANSPORT', name: 'Flip Flop Rent Car 取車', details: { name_jp: 'フリップフロップレンタカー', location_link: 'https://maps.app.goo.gl/g6z2B9p8V4t1H0e5A' } },
-                { time: '09:00', type: 'SIGHTSEEING', name: 'DMM kariyushi水族館', details: { name_jp: 'DMMかりゆし水族館', location_link: 'https://goo.gl/maps/zVbXbMWw3w3Jr7Lz8', guide: '互動式數位水族館，適合拍照' } },
-                { time: '12:30', type: 'SHOPPING', name: 'Iias 沖繩豐崎', details: { name_jp: 'イーアス沖縄豊崎', location_link: 'https://maps.app.goo.gl/B9p8V4t1H0e5A7r4A' } },
-                { time: '15:30', type: 'SIGHTSEEING', name: '萬座毛（Manzamo）懸崖海景觀賞', details: { name_jp: '万座毛', guide: '象鼻岩，壯觀海景', location_link: 'https://maps.app.goo.gl/Lz7f5QpG7j9tY42H8' } },
-                { time: '16:15', type: 'HOTEL', name: '住宿：Royal View Hotel Churaumi', details: { name_jp: 'ロイヤルビューホテル美ら海', location_link: 'https://goo.gl/maps/Rj2jKvkP6mq' } },
-                { time: '19:30', type: 'FOOD', name: '晚餐：牛排屋88 美麗海店', details: { name_jp: 'ステーキハウス88 美ら海店', guide: '沖繩老牌牛排店', location_link: 'https://maps.app.goo.gl/uXp8V4t1H0e5A7r4A' } },
+                { time: '08:00', type: 'TRANSPORT', name: 'Flip Flop Rent Car 取車', details: { name_jp: 'フリップフロップレンタカー', location_link: 'https://www.google.com/maps/search/?api=1&query=フリップフロップレンタカー' } },
+                { time: '09:00', type: 'SIGHTSEEING', name: 'DMM kariyushi水族館', details: { name_jp: 'DMMかりゆし水族館', location_link: 'https://www.google.com/maps/search/?api=1&query=DMMかりゆし水族館', guide: '互動式數位水族館，適合拍照' } },
+                { time: '12:30', type: 'SHOPPING', name: 'Iias 沖繩豐崎', details: { name_jp: 'イーアス沖縄豊崎', location_link: 'https://www.google.com/maps/search/?api=1&query=イーアス沖縄豊崎' } },
+                { time: '15:30', type: 'SIGHTSEEING', name: '萬座毛（Manzamo）懸崖海景觀賞', details: { name_jp: '万座毛', guide: '象鼻岩，壯觀海景', location_link: 'https://www.google.com/maps/search/?api=1&query=万座毛' } },
+                { time: '16:15', type: 'HOTEL', name: '住宿：Royal View Hotel Churaumi', details: { name_jp: 'ロイヤルビューホテル美ら海', location_link: 'https://www.google.com/maps/search/?api=1&query=ロイヤルビューホテル美ら海' } },
+                { time: '19:30', type: 'FOOD', name: '晚餐：牛排屋88 美麗海店', details: { name_jp: 'ステーキハウス88 美ら海店', guide: '沖繩老牌牛排店', location_link: 'https://www.google.com/maps/search/?api=1&query=ステーキハウス88+美ら海店' } },
             ]},
             { day: 3, date: '12/20', location: '海洋博公園', activities: [
-                { time: '08:30', type: 'SIGHTSEEING', name: '沖繩美麗海水族館', details: { name_jp: '沖縄美ら海水族館', guide: '黑潮之海鯨鯊餵食秀', location_link: 'https://maps.app.goo.gl/T4C4T3cWwN9eJ2f1A' } },
-                { time: '12:30', type: 'FOOD', name: '古宇利蝦蝦飯', details: { name_jp: 'Kouri Shrimp', guide: '蒜蓉蝦飯，排隊美食', location_link: 'https://maps.app.goo.gl/y8vF5Q8K7tWp71D3Q' } },
-                { time: '14:00', type: 'SIGHTSEEING', name: '古宇利島周邊遊玩與拍照', details: { name_jp: '古宇利島', guide: '跨海大橋美景', location_link: 'https://maps.app.goo.gl/V5Q8K7tWp71D3Qy8vF' } },
-                { time: '19:30', type: 'FOOD', name: '晚餐：Kijimunaa 塔可飯 或美國村周邊用餐', details: { name_jp: 'きじむなぁ (美國村店)', guide: '美式塔可飯，沖繩特色料理', location_link: 'https://maps.app.goo.gl/sD2M3zV6p7D8r4A' } },
+                { time: '08:30', type: 'SIGHTSEEING', name: '沖繩美麗海水族館', details: { name_jp: '沖縄美ら海水族館', guide: '黑潮之海鯨鯊餵食秀', location_link: 'https://www.google.com/maps/search/?api=1&query=沖縄美ら海水族館' } },
+                { time: '12:30', type: 'FOOD', name: '古宇利蝦蝦飯', details: { name_jp: 'Kouri Shrimp', guide: '蒜蓉蝦飯，排隊美食', location_link: 'https://www.google.com/maps/search/?api=1&query=Kouri+Shrimp' } },
+                { time: '14:00', type: 'SIGHTSEEING', name: '古宇利島周邊遊玩與拍照', details: { name_jp: '古宇利島', guide: '跨海大橋美景', location_link: 'https://www.google.com/maps/search/?api=1&query=古宇利島' } },
+                { time: '19:30', type: 'FOOD', name: '晚餐：Kijimunaa 塔可飯 或美國村周邊用餐', details: { name_jp: 'きじむなぁ (美國村店)', guide: '美式塔可飯，沖繩特色料理', location_link: 'https://www.google.com/maps/search/?api=1&query=きじむなぁ+デポアイランド店' } },
             ]},
             { day: 4, date: '12/21', location: '那霸', activities: [
-                { time: '10:00', type: 'SHOPPING', name: '永旺夢樂城沖繩來客夢購物', details: { name_jp: 'イオンモール沖縄ライカム', location_link: 'https://maps.app.goo.gl/r8vF5Q8K7tWp71D3Qy' } },
-                { time: '12:30', type: 'FOOD', name: '敘敘苑燒肉（浦添PARCO CITY店）', details: { name_jp: '叙々苑 浦添パルコシティ店', guide: '高級燒肉，建議提前預約', location_link: 'https://maps.app.goo.gl/J2P7D8r4A6z2B9p8V4' } },
-                { time: '15:30', type: 'SIGHTSEEING', name: '首里城公園（外圍區域參觀）', details: { name_jp: '首里城公園', guide: '世界遺產，主要建築正在修復', location_link: 'https://maps.app.goo.gl/1d4Qj3zJ7kS5L7wK9' } },
-                { time: '17:00', type: 'SIGHTSEEING', name: '波上宮＆波之上海灘', details: { name_jp: '波上宮・波の上ビーチ', guide: '海邊神社，獨特景觀', location_link: 'https://maps.app.goo.gl/3zV6p7D8r4A6z2B9p' } },
-                { time: '18:30', type: 'TRANSPORT', name: '歸還租賃汽車 (Flip Flop Rent Car)', details: { name_jp: 'フリップフロップレンタカー還車處', location_link: 'https://maps.app.goo.gl/g6z2B9p8V4t1H0e5A' } },
+                { time: '10:00', type: 'SHOPPING', name: '永旺夢樂城沖繩來客夢購物', details: { name_jp: 'イオンモール沖縄ライカム', location_link: 'https://www.google.com/maps/search/?api=1&query=イオンモール沖縄ライカム' } },
+                { time: '12:30', type: 'FOOD', name: '敘敘苑燒肉（浦添PARCO CITY店）', details: { name_jp: '叙々苑 浦添パルコシティ店', guide: '高級燒肉，建議提前預約', location_link: 'https://www.google.com/maps/search/?api=1&query=叙々苑+浦添パルコシティ店' } },
+                { time: '15:30', type: 'SIGHTSEEING', name: '首里城公園（外圍區域參觀）', details: { name_jp: '首里城公園', guide: '世界遺產，主要建築正在修復', location_link: 'https://www.google.com/maps/search/?api=1&query=首里城公園' } },
+                { time: '17:00', type: 'SIGHTSEEING', name: '波上宮＆波之上海灘', details: { name_jp: '波上宮・波の上ビーチ', guide: '海邊神社，獨特景觀', location_link: 'https://www.google.com/maps/search/?api=1&query=波上宮' } },
+                { time: '18:30', type: 'TRANSPORT', name: '歸還租賃汽車 (Flip Flop Rent Car)', details: { name_jp: 'フリップフロップレンタカー還車處', location_link: 'https://www.google.com/maps/search/?api=1&query=フリップフロップレンタカー' } },
             ]},
             { day: 5, date: '12/22', location: '瀨長島', activities: [
-                { time: '09:00', type: 'SIGHTSEEING', name: '瀨長島 (Umikaji Terrace) 觀光/咖啡', details: { name_jp: '瀬長島ウミカジテラス', guide: '白色小屋，購物休閒', location_link: 'https://maps.app.goo.gl/d3Qy8vF5Q8K7tWp71' } },
+                { time: '09:00', type: 'SIGHTSEEING', name: '瀨長島 (Umikaji Terrace) 觀光/咖啡', details: { name_jp: '瀬長島ウミカジテラス', guide: '白色小屋，購物休閒', location_link: 'https://www.google.com/maps/search/?api=1&query=瀬長島ウミカジテラス' } },
                 { time: '11:00', type: 'TRANSPORT', name: '從瀨長島前往那霸機場' },
-                { time: '11:30', type: 'TRANSPORT', name: '抵達機場 & 辦理登機手續', details: { name_jp: '那覇空港 (國內線/國際線)', location_link: 'https://maps.app.goo.gl/tWp71D3Qy8vF5Q8K7' } },
+                { time: '11:30', type: 'TRANSPORT', name: '抵達機場 & 辦理登機手續', details: { name_jp: '那覇空港 (國內線/國際線)', location_link: 'https://www.google.com/maps/search/?api=1&query=那覇空港' } },
                 { time: '13:35', type: 'TRANSPORT', name: '搭乘樂桃 MM925 賦歸台北' },
             ]},
         ];
@@ -117,6 +118,8 @@
                 if (!firebaseConfig || !Object.keys(firebaseConfig).length) {
                     console.warn("Firebase configuration is missing. Running in offline/demo mode.");
                     setIsAuthReady(true);
+                    // Generate a fake user ID for demo mode
+                    setUserId('demo-user-' + Math.floor(Math.random() * 1000));
                     return;
                 }
 
@@ -168,6 +171,7 @@
             const [itinerary, setItinerary] = useState([]);
             const [loading, setLoading] = useState(true);
 
+            // Initialize itinerary if online
             const initializeItinerary = useCallback(async (firestoreDb, currentAppId) => {
                 const itineraryCollection = collection(firestoreDb, `artifacts/${currentAppId}/public/data/itinerary`);
                 const q = query(itineraryCollection, limit(1));
@@ -186,6 +190,7 @@
                 }
             }, []);
 
+            // Initial Load / Subscription
             useEffect(() => {
                 if (!isAuthReady) {
                     setLoading(true);
@@ -194,8 +199,9 @@
 
                 // Offline / Demo mode
                 if (!db) {
-                    setItinerary(INITIAL_TRIP_DATA);
-                    setExpenses([]);
+                    if (itinerary.length === 0) setItinerary(INITIAL_TRIP_DATA);
+                    // Keep existing expenses if any, or init empty
+                    if (expenses.length === 0) setExpenses([]);
                     setLoading(false);
                     return;
                 }
@@ -250,7 +256,123 @@
                 };
             }, [db, userId, isAuthReady, appId, initializeItinerary]);
 
-            return { expenses, itinerary, loading };
+
+            // --- ACTIONS (Support both Online & Offline) ---
+
+            const addExpense = useCallback(async (expenseData) => {
+                const timestamp = new Date();
+                
+                if (db) {
+                    await addDoc(collection(db, `artifacts/${appId}/public/data/expenses`), {
+                        ...expenseData,
+                        userId,
+                        timestamp: serverTimestamp(),
+                    });
+                } else {
+                    // Offline mode
+                    const newExpense = {
+                        id: Date.now().toString(),
+                        ...expenseData,
+                        userId,
+                        timestamp: timestamp.toLocaleString(),
+                        rawTimestamp: timestamp,
+                    };
+                    setExpenses(prev => [newExpense, ...prev]);
+                }
+            }, [db, appId, userId]);
+
+            const deleteExpense = useCallback(async (expenseId) => {
+                if (db) {
+                    await deleteDoc(doc(db, `artifacts/${appId}/public/data/expenses`, expenseId));
+                } else {
+                    setExpenses(prev => prev.filter(e => e.id !== expenseId));
+                }
+            }, [db, appId]);
+
+            const saveActivity = useCallback(async (dayNumber, activityData, index) => {
+                // Find current day plan from state to ensure we have latest data
+                // In online mode, we re-fetch effectively via the update logic, but we need the current structure
+                let currentItinerary = itinerary;
+                const dayPlan = currentItinerary.find(d => d.day === dayNumber);
+                if (!dayPlan) return;
+
+                const newActivities = [...dayPlan.activities];
+                if (index === null) {
+                    // New activity
+                    newActivities.push(activityData);
+                } else {
+                    // Update activity
+                    newActivities[index] = activityData;
+                }
+
+                // SORT BY TIME
+                newActivities.sort((a, b) => {
+                    const timeA = a.time || '00:00';
+                    const timeB = b.time || '00:00';
+                    return timeA.localeCompare(timeB);
+                });
+
+                if (db) {
+                    const dayDocRef = doc(db, `artifacts/${appId}/public/data/itinerary`, `day-${dayNumber}`);
+                    await updateDoc(dayDocRef, {
+                        activities: newActivities,
+                    });
+                } else {
+                    setItinerary(prev => prev.map(day => {
+                        if (day.day === dayNumber) {
+                            return { ...day, activities: newActivities };
+                        }
+                        return day;
+                    }));
+                }
+            }, [db, appId, itinerary]);
+
+            const deleteActivity = useCallback(async (dayNumber, index) => {
+                const dayPlan = itinerary.find(d => d.day === dayNumber);
+                if (!dayPlan) return;
+                
+                const newActivities = dayPlan.activities.filter((_, i) => i !== index);
+
+                if (db) {
+                    const dayDocRef = doc(db, `artifacts/${appId}/public/data/itinerary`, `day-${dayNumber}`);
+                    await updateDoc(dayDocRef, {
+                        activities: newActivities,
+                    });
+                } else {
+                     setItinerary(prev => prev.map(day => {
+                        if (day.day === dayNumber) {
+                            return { ...day, activities: newActivities };
+                        }
+                        return day;
+                    }));
+                }
+            }, [db, appId, itinerary]);
+
+            const resetItinerary = useCallback(async () => {
+                 if (db) {
+                    const itineraryCollection = collection(db, `artifacts/${appId}/public/data/itinerary`);
+                    const snapshot = await getDocs(query(itineraryCollection));
+                    await Promise.all(snapshot.docs.map(doc => deleteDoc(doc.ref)));
+                    await Promise.all(INITIAL_TRIP_DATA.map(dayPlan =>
+                        setDoc(doc(itineraryCollection, `day-${dayPlan.day}`), dayPlan)
+                    ));
+                 } else {
+                     setItinerary(INITIAL_TRIP_DATA);
+                 }
+            }, [db, appId]);
+
+
+            return { 
+                expenses, 
+                itinerary, 
+                loading,
+                // Export CRUD actions
+                addExpense,
+                deleteExpense,
+                saveActivity,
+                deleteActivity,
+                resetItinerary
+            };
         };
 
         // --- COMPONENTS ---
@@ -328,7 +450,7 @@
             );
         };
 
-        const ActivityEditor = ({ db, appId, dayPlan, initialActivity, activityIndex, onClose }) => {
+        const ActivityEditor = ({ dayPlan, initialActivity, activityIndex, onClose, onSave }) => {
             const isNew = initialActivity === null;
             const [formData, setFormData] = useState({
                 time: initialActivity?.time || '09:00',
@@ -346,8 +468,7 @@
 
             const handleSubmit = async (e) => {
                 e.preventDefault();
-                if (!db) return;
-
+                
                 const newActivity = {
                     time: formData.time,
                     type: formData.type,
@@ -360,19 +481,8 @@
                     }
                 };
 
-                const newActivities = [...dayPlan.activities];
-
-                if (isNew) {
-                    newActivities.push(newActivity);
-                } else if (activityIndex !== null) {
-                    newActivities[activityIndex] = newActivity;
-                }
-
                 try {
-                    const dayDocRef = doc(db, `artifacts/${appId}/public/data/itinerary`, `day-${dayPlan.day}`);
-                    await updateDoc(dayDocRef, {
-                        activities: newActivities,
-                    });
+                    await onSave(dayPlan.day, newActivity, activityIndex);
                     onClose();
                 } catch (error) {
                     console.error("Error saving activity:", error);
@@ -482,75 +592,95 @@
             );
         };
 
-        const ExpenseTracker = ({ db, userId, expenses, loading, isAuthReady, appId }) => {
+        const ExpenseTracker = ({ userId, expenses, loading, isAuthReady, onAddExpense, onDeleteExpense }) => {
             const [description, setDescription] = useState('');
             const [amount, setAmount] = useState('');
             const [payer, setPayer] = useState(PAYER_OPTIONS[0].id);
             const [currency, setCurrency] = useState('JPY');
+            const [type, setType] = useState('EXPENSE'); // 'EXPENSE' or 'DEPOSIT'
             const [modalOpen, setModalOpen] = useState(false);
             const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
 
-            const totalJPY = expenses.reduce((sum, exp) => sum + (exp.currency === 'JPY' ? exp.amount : 0), 0);
-            const totalTWD = expenses.reduce((sum, exp) => sum + (exp.currency === 'TWD' ? exp.amount : exp.amount * JPY_TO_TWD_RATE), 0);
+            // Ensure we handle TWD conversion to JPY properly for balance calculation
+            // If currency is TWD, convert to JPY (Amount / Rate)
+            // If currency is JPY, keep as is
+            const convertToJPY = (amt, curr) => curr === 'JPY' ? amt : amt / JPY_TO_TWD_RATE;
+
+            const totalDepositsJPY = expenses
+                .filter(e => e.type === 'DEPOSIT')
+                .reduce((sum, e) => sum + convertToJPY(e.amount, e.currency), 0);
+
+            const totalExpensesJPY = expenses
+                .filter(e => !e.type || e.type === 'EXPENSE')
+                .reduce((sum, e) => sum + convertToJPY(e.amount, e.currency), 0);
+
+            const balanceJPY = totalDepositsJPY - totalExpensesJPY;
 
             const getPayerName = (payerId) => PAYER_OPTIONS.find(p => p.id === payerId)?.name || payerId;
 
             const formatCurrency = (val, curr) => {
                 if (curr === 'JPY') {
-                    return `¥${(Math.round(val * 100) / 100).toLocaleString('ja-JP', { minimumFractionDigits: 0 })}`;
+                    return `¥${(Math.round(val)).toLocaleString('ja-JP')}`;
                 }
-                return `$${(Math.round(val * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0 })}`;
+                return `$${(Math.round(val)).toLocaleString('en-US')}`;
             };
 
             const handleSubmit = useCallback(async (e) => {
                 e.preventDefault();
-                if (!db || !userId || !description || !amount || !payer) return;
+                if (!userId || !description || !amount || !payer) return;
 
                 const expense = {
                     description,
                     amount: parseFloat(amount),
                     currency,
                     payer,
-                    userId,
-                    timestamp: serverTimestamp(),
+                    type, // 'EXPENSE' or 'DEPOSIT'
                 };
 
                 try {
-                    await addDoc(collection(db, `artifacts/${appId}/public/data/expenses`), expense);
+                    await onAddExpense(expense);
                     setDescription('');
                     setAmount('');
                     setPayer(PAYER_OPTIONS[0].id);
                     setCurrency('JPY');
+                    setType('EXPENSE');
                     setModalOpen(false);
                 } catch (error) {
                     console.error("Error adding expense:", error);
                 }
-            }, [db, userId, description, amount, payer, currency, appId]);
+            }, [userId, description, amount, payer, currency, type, onAddExpense]);
 
             const handleDelete = useCallback(async () => {
-                if (!db || !deleteModal.id) return;
+                if (!deleteModal.id) return;
                 try {
-                    await deleteDoc(doc(db, `artifacts/${appId}/public/data/expenses`, deleteModal.id));
+                    await onDeleteExpense(deleteModal.id);
                     setDeleteModal({ open: false, id: null });
                 } catch (error) {
                     console.error("Error deleting expense:", error);
                 }
-            }, [db, deleteModal.id, appId]);
+            }, [deleteModal.id, onDeleteExpense]);
 
             return (
                 <div className="p-4 bg-white rounded-xl shadow-lg h-full overflow-hidden flex flex-col">
                     <h2 className="text-2xl font-bold text-gray-800 border-b pb-2 mb-4 flex items-center">
-                        <Euro className="w-6 h-6 mr-2 text-pink-500" /> 共同記帳本
+                        <Wallet className="w-6 h-6 mr-2 text-pink-500" /> 共同記帳本
                     </h2>
 
-                    <div className="mb-4 space-y-2 p-3 bg-pink-50 rounded-lg shadow-inner">
-                        <div className="flex justify-between font-semibold text-gray-700">
-                            <span>總支出 (JPY):</span>
-                            <span className="text-pink-600">{formatCurrency(totalJPY, 'JPY')}</span>
+                    {/* Summary Cards */}
+                    <div className="mb-4 grid grid-cols-3 gap-2">
+                        <div className="p-2 bg-green-50 rounded-lg shadow-sm border border-green-100 flex flex-col items-center">
+                            <span className="text-xs text-gray-500 font-medium">總儲值 (入金)</span>
+                            <span className="text-sm font-bold text-green-600">{formatCurrency(totalDepositsJPY, 'JPY')}</span>
                         </div>
-                        <div className="flex justify-between font-semibold text-gray-700">
-                            <span>約台幣總額 (TWD):</span>
-                            <span className="text-green-600">{formatCurrency(totalTWD, 'TWD')}</span>
+                        <div className="p-2 bg-red-50 rounded-lg shadow-sm border border-red-100 flex flex-col items-center">
+                            <span className="text-xs text-gray-500 font-medium">總支出</span>
+                            <span className="text-sm font-bold text-red-600">{formatCurrency(totalExpensesJPY, 'JPY')}</span>
+                        </div>
+                        <div className="p-2 bg-blue-50 rounded-lg shadow-sm border border-blue-100 flex flex-col items-center">
+                            <span className="text-xs text-gray-500 font-medium">公費餘額</span>
+                            <span className={`text-sm font-bold ${balanceJPY >= 0 ? 'text-blue-600' : 'text-red-500'}`}>
+                                {formatCurrency(balanceJPY, 'JPY')}
+                            </span>
                         </div>
                     </div>
 
@@ -558,53 +688,80 @@
                         onClick={() => setModalOpen(true)}
                         className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl transition duration-300 shadow-md flex items-center justify-center mb-4"
                     >
-                        <Plus className="w-5 h-5 mr-2" /> 新增支出
+                        <Plus className="w-5 h-5 mr-2" /> 新增紀錄
                     </button>
 
                     <div className="flex-grow overflow-y-auto space-y-3 pr-2">
                         {loading && <p className="text-center text-gray-500">載入中...</p>}
                         {!isAuthReady && <div className="text-center text-red-500 flex items-center justify-center"><AlertTriangle className="w-4 h-4 mr-1" /> 認證中，請稍候...</div>}
-                        {!loading && expenses.length === 0 && <p className="text-center text-gray-500">目前沒有共同支出記錄。</p>}
+                        {!loading && expenses.length === 0 && <p className="text-center text-gray-500">目前沒有交易記錄。</p>}
 
-                        {expenses.map((expense) => (
-                            <div key={expense.id} className="flex items-center justify-between p-3 bg-pink-50 rounded-xl shadow-sm border border-pink-200 hover:bg-pink-100 transition duration-150">
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-semibold text-gray-800 truncate">{expense.description}</p>
-                                    <p className="text-sm text-gray-500">
-                                        <span className="font-medium text-pink-600 mr-2">{getPayerName(expense.payer)}</span> 
-                                        <span className="text-xs">支付於 {expense.timestamp}</span>
-                                    </p>
+                        {expenses.map((expense) => {
+                            const isDeposit = expense.type === 'DEPOSIT';
+                            return (
+                                <div key={expense.id} className={`flex items-center justify-between p-3 rounded-xl shadow-sm border transition duration-150 ${isDeposit ? 'bg-green-50 border-green-200 hover:bg-green-100' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
+                                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                        <div className={`p-2 rounded-full ${isDeposit ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                            {isDeposit ? <ArrowDownCircle className="w-5 h-5" /> : <ArrowUpCircle className="w-5 h-5" />}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-gray-800 truncate">{expense.description}</p>
+                                            <p className="text-sm text-gray-500">
+                                                <span className="font-medium mr-2">{getPayerName(expense.payer)} {isDeposit ? '儲值' : '支付'}</span> 
+                                                <span className="text-xs text-gray-400">{expense.timestamp}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center space-x-2 pl-2">
+                                        <span className={`text-lg font-bold ${isDeposit ? 'text-green-600' : 'text-red-600'}`}>
+                                            {isDeposit ? '+' : '-'}{formatCurrency(expense.amount, expense.currency)}
+                                        </span>
+                                        {expense.userId === userId && ( 
+                                            <button
+                                                onClick={() => setDeleteModal({ open: true, id: expense.id })}
+                                                className="p-1 text-gray-400 hover:text-red-600 transition duration-150 rounded-full hover:bg-gray-100"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-lg font-bold text-red-600">
-                                        {formatCurrency(expense.amount, expense.currency)}
-                                    </span>
-                                    {expense.userId === userId && ( 
-                                        <button
-                                            onClick={() => setDeleteModal({ open: true, id: expense.id })}
-                                            className="p-1 text-red-400 hover:text-red-600 transition duration-150 rounded-full hover:bg-red-100"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {modalOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                             <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
-                                <h3 className="text-xl font-bold mb-4 border-b pb-2">新增共同支出</h3>
+                                <h3 className="text-xl font-bold mb-4 border-b pb-2">新增交易紀錄</h3>
                                 <form onSubmit={handleSubmit} className="space-y-4">
+                                    
+                                    {/* Transaction Type Toggle */}
+                                    <div className="flex p-1 bg-gray-100 rounded-lg">
+                                        <button
+                                            type="button"
+                                            onClick={() => setType('EXPENSE')}
+                                            className={`flex-1 py-2 text-sm font-bold rounded-md transition duration-200 flex items-center justify-center ${type === 'EXPENSE' ? 'bg-white text-red-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                        >
+                                            <ArrowUpCircle className="w-4 h-4 mr-1" /> 支出 (Expense)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setType('DEPOSIT')}
+                                            className={`flex-1 py-2 text-sm font-bold rounded-md transition duration-200 flex items-center justify-center ${type === 'DEPOSIT' ? 'bg-white text-green-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                        >
+                                            <ArrowDownCircle className="w-4 h-4 mr-1" /> 儲值 (Income)
+                                        </button>
+                                    </div>
+
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">項目描述</label>
-                                        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required />
+                                        <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" placeholder={type === 'DEPOSIT' ? "例如：公費入金" : "例如：午餐"} required />
                                     </div>
                                     <div className="flex space-x-4">
                                         <div className="flex-1">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">金額</label>
-                                            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required min="0.01" step="0.01" />
+                                            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required min="1" step="1" />
                                         </div>
                                         <div className="w-24">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">幣別</label>
@@ -615,15 +772,17 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">付款人</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{type === 'DEPOSIT' ? '提供者' : '付款人'}</label>
                                         <select value={payer} onChange={(e) => setPayer(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-white" required>
-                                            <option value="" disabled>選擇付款人</option>
+                                            <option value="" disabled>選擇人員</option>
                                             {PAYER_OPTIONS.map(p => (<option key={p.id} value={p.id}>{p.name}</option>))}
                                         </select>
                                     </div>
                                     <div className="flex justify-end space-x-3">
                                         <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">取消</button>
-                                        <button type="submit" className="px-4 py-2 text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition">儲存支出</button>
+                                        <button type="submit" className={`px-4 py-2 text-white rounded-lg transition shadow-md ${type === 'DEPOSIT' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}>
+                                            {type === 'DEPOSIT' ? '儲存入金' : '儲存支出'}
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -635,7 +794,7 @@
                             <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl text-center">
                                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-4" />
                                 <h3 className="text-lg font-bold mb-2">確認刪除</h3>
-                                <p className="text-gray-600 mb-6">您確定要刪除這筆支出紀錄嗎？此操作無法復原。</p>
+                                <p className="text-gray-600 mb-6">您確定要刪除這筆紀錄嗎？此操作無法復原。</p>
                                 <div className="flex justify-center space-x-4">
                                     <button type="button" onClick={() => setDeleteModal({ open: false, id: null })} className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">取消</button>
                                     <button type="button" onClick={handleDelete} className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition">刪除</button>
@@ -647,7 +806,7 @@
             );
         };
 
-        const TripPlanner = ({ db, userId, isAuthReady, itinerary, loading, appId }) => {
+        const TripPlanner = ({ userId, isAuthReady, itinerary, loading, onSaveActivity, onDeleteActivity, onResetItinerary }) => {
             const [checkedActivities, setCheckedActivities] = useState({});
             const [selectedDay, setSelectedDay] = useState(1);
             const [isEditing, setIsEditing] = useState(false);
@@ -665,42 +824,26 @@
             const currentDayPlan = itinerary.find(plan => plan.day === selectedDay);
 
             const handleDeleteActivity = useCallback(async () => {
-                if (!db || !deleteModal.day || deleteModal.index === null) return;
-                
-                const dayPlan = itinerary.find(p => p.day === deleteModal.day);
-                if (!dayPlan) return;
-
-                const newActivities = dayPlan.activities.filter((_, i) => i !== deleteModal.index);
-                
+                if (!deleteModal.day || deleteModal.index === null) return;
                 try {
-                    const dayDocRef = doc(db, `artifacts/${appId}/public/data/itinerary`, `day-${dayPlan.day}`);
-                    await updateDoc(dayDocRef, {
-                        activities: newActivities,
-                    });
+                    await onDeleteActivity(deleteModal.day, deleteModal.index);
                     setDeleteModal({ open: false, day: null, index: null });
                 } catch (error) {
                     console.error("Error deleting activity:", error);
                 }
-            }, [db, deleteModal, itinerary, appId]);
+            }, [deleteModal, onDeleteActivity]);
 
             const handleResetItinerary = useCallback(async () => {
-                if (!db) return;
                 if (!window.confirm("警告：您確定要將行程重置為初始預設值嗎？所有編輯都將遺失！")) return;
 
                 try {
-                    const itineraryCollection = collection(db, `artifacts/${appId}/public/data/itinerary`);
-                    const snapshot = await getDocs(query(itineraryCollection));
-                    await Promise.all(snapshot.docs.map(doc => deleteDoc(doc.ref)));
-
-                    await Promise.all(INITIAL_TRIP_DATA.map(dayPlan =>
-                        setDoc(doc(itineraryCollection, `day-${dayPlan.day}`), dayPlan)
-                    ));
+                    await onResetItinerary();
                     alert("行程已成功重置為初始版本。");
                 } catch (error) {
                     console.error("Error resetting itinerary:", error);
                     alert("重置行程失敗。");
                 }
-            }, [db, appId]);
+            }, [onResetItinerary]);
 
             const getActivityIcon = (type) => {
                 const activityType = ACTIVITY_TYPES.find(t => t.value === type);
@@ -888,11 +1031,10 @@
 
                     {editorModal.open && editorModal.day && (
                         <ActivityEditor
-                            db={db}
-                            appId={appId}
                             dayPlan={editorModal.day}
                             initialActivity={editorModal.activity}
                             activityIndex={editorModal.index}
+                            onSave={onSaveActivity}
                             onClose={() => setEditorModal({ open: false, day: null, activity: null, index: null })}
                         />
                     )}
@@ -931,7 +1073,16 @@
             const { db, userId, isAuthReady, appId } = useFirebaseSetup();
 
             // 2. Firestore Data Hook
-            const { expenses, itinerary, loading } = useTripData(db, userId, isAuthReady, appId);
+            const { 
+                expenses, 
+                itinerary, 
+                loading,
+                addExpense,
+                deleteExpense,
+                saveActivity,
+                deleteActivity,
+                resetItinerary
+            } = useTripData(db, userId, isAuthReady, appId);
 
             const [activeTab, setActiveTab] = useState(0);
 
@@ -974,22 +1125,23 @@
                     <main className="pt-16 max-w-7xl mx-auto h-[calc(100vh-4rem)]">
                         {activeTab === 0 && (
                             <TripPlanner 
-                                db={db}
                                 userId={userId}
                                 isAuthReady={isAuthReady}
                                 itinerary={itinerary}
                                 loading={loading}
-                                appId={appId}
+                                onSaveActivity={saveActivity}
+                                onDeleteActivity={deleteActivity}
+                                onResetItinerary={resetItinerary}
                             />
                         )}
                         {activeTab === 1 && (
                             <ExpenseTracker
-                                db={db}
                                 userId={userId}
                                 expenses={expenses}
                                 loading={loading}
                                 isAuthReady={isAuthReady}
-                                appId={appId}
+                                onAddExpense={addExpense}
+                                onDeleteExpense={deleteExpense}
                             />
                         )}
                     </main>
