@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>沖繩 2025 - 旅遊行程表</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Lucide Icons (UMD Build) -->
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .font-fredoka {
+        font-family: 'Fredoka', sans-serif;
+      }
+      /* Custom scrollbar for webkit */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #fdf2f8; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #f9a8d4; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #f472b6; 
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-900 antialiased selection:bg-pink-200 selection:text-pink-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+        
+        // Fix: The global variable for the UMD build is 'lucideReact' (camelCase)
+        const LucideIcons = window.lucideReact || {};
+        
+        const { 
+            Calendar, MapPin, List, Wallet, Plus, Plane, BedDouble, 
+            Utensils, Camera, Car, ShoppingBag, Info, ExternalLink, 
+            Pencil, Save, X, Trash2, Users, DollarSign, Receipt, 
+            AlertTriangle, RefreshCcw, Check 
+        } = LucideIcons;
+
+        // --- CONSTANTS & TYPES ---
+
+        const ActivityType = {
+            FLIGHT: 'FLIGHT',
+            HOTEL: 'HOTEL',
+            FOOD: 'FOOD',
+            ACTIVITY: 'ACTIVITY',
+            TRANSPORT: 'TRANSPORT',
+            SHOPPING: 'SHOPPING',
+        };
+
+        const TRAVELERS = ['CN', 'KT'];
+
+        const ITINERARY_DATA = [
+          {
+            date: '2025-12-18',
+            displayDate: '12月18日 (四)',
+            items: [
+              {
+                id: '1-1',
+                time: '13:20',
+                title: '抵達桃園機場辦理登機',
+                location: '桃園機場 (TPE)',
+                type: ActivityType.FLIGHT,
+                description: '準備出發。',
+              },
+              {
+                id: '1-2',
+                time: '15:20',
+                title: '搭乘 MM926 飛往沖繩',
+                location: '樂桃航空',
+                type: ActivityType.FLIGHT,
+                description: '飛行時間約 1小時 30分。',
+              },
+              {
+                id: '1-3',
+                time: '17:50',
+                title: '抵達那霸機場',
+                location: '那霸機場 (OKA)',
+                type: ActivityType.FLIGHT,
+                description: '歡迎來到沖繩！',
+              },
+              {
+                id: '1-4',
+                time: '18:15',
+                title: '飯店辦理入住',
+                location: '那霸西鐵渡假客棧',
+                type: ActivityType.HOTEL,
+                description: '放置行李並稍作休息。',
+              },
+              {
+                id: '1-5',
+                time: '20:30',
+                title: '晚餐：燒肉 琉球の牛',
+                location: '那霸久茂地店',
+                type: ActivityType.FOOD,
+                description: '享受頂級和牛體驗。',
+              },
+            ],
+          },
+          {
+            date: '2025-12-19',
+            displayDate: '12月19日 (五)',
+            items: [
+              {
+                id: '2-1',
+                time: '08:00',
+                title: '領取租車',
+                location: 'Flip Flop Rent Car',
+                type: ActivityType.TRANSPORT,
+                description: '開始自駕之旅。',
+              },
+              {
+                id: '2-2',
+                time: '09:00',
+                title: 'DMM Kariyushi 水族館',
+                location: '豐見城市',
+                type: ActivityType.ACTIVITY,
+                description: '現代化的水族館體驗。',
+              },
+              {
+                id: '2-3',
+                time: '12:30',
+                title: '購物 & 午餐',
+                location: 'Iias 沖繩豐崎',
+                type: ActivityType.SHOPPING,
+                description: '位於水族館旁的購物中心。',
+              },
+              {
+                id: '2-4',
+                time: '14:30',
+                title: '開車前往萬座毛',
+                location: '恩納村',
+                type: ActivityType.TRANSPORT,
+                description: '欣賞沿海風景。',
+              },
+              {
+                id: '2-5',
+                time: '15:30',
+                title: '萬座毛 (懸崖海景)',
+                location: '萬座毛',
+                type: ActivityType.ACTIVITY,
+                description: '著名的象鼻岩景觀。',
+              },
+              {
+                id: '2-6',
+                time: '16:15',
+                title: '飯店辦理入住',
+                location: 'Royal View Hotel Churaumi',
+                type: ActivityType.HOTEL,
+                description: '鄰近美麗海水族館。',
+              },
+              {
+                id: '2-7',
+                time: '19:30',
+                title: '晚餐：牛排屋 88',
+                location: '美麗海店',
+                type: ActivityType.FOOD,
+                description: '經典的沖繩牛排屋。',
+              },
+            ],
+          },
+          {
+            date: '2025-12-20',
+            displayDate: '12月20日 (六)',
+            items: [
+              {
+                id: '3-1',
+                time: '08:30',
+                title: '沖繩美麗海水族館',
+                location: '本部町',
+                type: ActivityType.ACTIVITY,
+                description: '觀賞著名的黑潮之海大水槽。',
+              },
+              {
+                id: '3-2',
+                time: '12:30',
+                title: '午餐：古宇利蝦蝦飯',
+                location: '古宇利島',
+                type: ActivityType.FOOD,
+                description: '超人氣蒜香蝦餐車。',
+              },
+              {
+                id: '3-3',
+                time: '14:00',
+                title: '古宇利島周邊遊玩',
+                location: '古宇利島',
+                type: ActivityType.ACTIVITY,
+                description: '愛心岩與跨海大橋美景。',
+              },
+              {
+                id: '3-4',
+                time: '19:30',
+                title: '晚餐：塔可飯',
+                location: 'Kijimunaa 或 美國村周邊',
+                type: ActivityType.FOOD,
+                description: '沖繩在地特色料理。',
+              },
+              {
+                id: '3-5',
+                time: '20:00',
+                title: '美國村聖誕煙火',
+                location: '美國村',
+                type: ActivityType.ACTIVITY,
+                description: '請務必再次確認施放時間。',
+              },
+              {
+                id: '3-6',
+                time: '20:30',
+                title: '星野 BANTA CAFE',
+                location: '讀谷村',
+                type: ActivityType.ACTIVITY,
+                description: '夜間開放，享受海邊夜景。',
+              },
+            ],
+          },
+          {
+            date: '2025-12-21',
+            displayDate: '12月21日 (日)',
+            items: [
+              {
+                id: '4-1',
+                time: '10:00',
+                title: '購物',
+                location: '永旺夢樂城沖繩來客夢',
+                type: ActivityType.SHOPPING,
+                description: '沖繩最大的購物中心。',
+              },
+              {
+                id: '4-2',
+                time: '12:30',
+                title: '午餐：敘敘苑燒肉',
+                location: '浦添 PARCO CITY 店',
+                type: ActivityType.FOOD,
+                description: '擁有絕美海景的高級燒肉。',
+              },
+              {
+                id: '4-3',
+                time: '14:00',
+                title: '開車前往那霸市區',
+                location: '那霸市',
+                type: ActivityType.TRANSPORT,
+                description: '返回市中心。',
+              },
+              {
+                id: '4-4',
+                time: '15:30',
+                title: '首里城公園',
+                location: '首里',
+                type: ActivityType.ACTIVITY,
+                description: '參觀外圍區域。',
+              },
+              {
+                id: '4-5',
+                time: '17:00',
+                title: '波上宮 & 波之上海灘',
+                location: '那霸市',
+                type: ActivityType.ACTIVITY,
+                description: '懸崖上的神社。',
+              },
+              {
+                id: '4-6',
+                time: '18:30',
+                title: '歸還租賃汽車',
+                location: 'Flip Flop Rent Car',
+                type: ActivityType.TRANSPORT,
+                description: '結束租車行程。',
+              },
+              {
+                id: '4-7',
+                time: '20:30',
+                title: '晚餐：那霸市區特色料理',
+                location: '國際通 / 那霸市區',
+                type: ActivityType.FOOD,
+                description: '如：阿古豬涮涮鍋或居酒屋。',
+              },
+            ],
+          },
+          {
+            date: '2025-12-22',
+            displayDate: '12月22日 (一)',
+            items: [
+              {
+                id: '5-1',
+                time: '08:30',
+                title: '前往瀨長島',
+                location: '單軌電車 / 計程車',
+                type: ActivityType.TRANSPORT,
+                description: '最後的觀光景點。',
+              },
+              {
+                id: '5-2',
+                time: '09:00',
+                title: '瀨長島 (Umikaji Terrace)',
+                location: '瀨長島',
+                type: ActivityType.ACTIVITY,
+                description: '白色階梯、海景咖啡廳與飛機起降觀賞。',
+              },
+              {
+                id: '5-3',
+                time: '11:00',
+                title: '前往那霸機場',
+                location: '那霸機場',
+                type: ActivityType.TRANSPORT,
+                description: '準備回家。',
+              },
+              {
+                id: '5-4',
+                time: '11:30',
+                title: '機場報到',
+                location: '那霸機場',
+                type: ActivityType.FLIGHT,
+                description: '辦理登機手續。',
+              },
+              {
+                id: '5-5',
+                time: '13:35',
+                title: '搭乘樂桃 MM925 返回台北',
+                location: '樂桃航空',
+                type: ActivityType.FLIGHT,
+                description: '賦歸。',
+              },
+            ],
+          },
+        ];
+
+        // --- COMPONENTS ---
+
+        // EventCard Component
+        const EventCard = ({ item, onSave, onDelete }) => {
+            const [isEditing, setIsEditing] = useState(false);
+            const [editedItem, setEditedItem] = useState(item);
+            const [isMarkedForDelete, setIsMarkedForDelete] = useState(false);
+            const [lastActivity, setLastActivity] = useState(Date.now());
+            const [showAutoSave, setShowAutoSave] = useState(false);
+
+            useEffect(() => {
+                setEditedItem(item);
+                setIsMarkedForDelete(false);
+            }, [item]);
+
+            // Auto-save logic
+            useEffect(() => {
+                let timer;
+                if (isEditing && !isMarkedForDelete) {
+                    timer = setTimeout(() => {
+                        if (Date.now() - lastActivity >= 300000) { // 5 minutes
+                            if (onSave) {
+                                onSave(editedItem);
+                                setShowAutoSave(true);
+                                setTimeout(() => setShowAutoSave(false), 3000);
+                            }
+                        }
+                    }, 10000); // Check every 10 seconds
+                }
+                return () => clearTimeout(timer);
+            }, [isEditing, isMarkedForDelete, lastActivity, editedItem, onSave]);
+
+            const updateField = (field, value) => {
+                setEditedItem(prev => ({ ...prev, [field]: value }));
+                setLastActivity(Date.now());
+            };
+
+            const getActivityIcon = (type) => {
+                // Safety check if icons are undefined
+                if (!LucideIcons) return null;
+                
+                switch (type) {
+                    case ActivityType.FLIGHT: return Plane ? <Plane className="w-5 h-5 text-sky-500" /> : null;
+                    case ActivityType.HOTEL: return BedDouble ? <BedDouble className="w-5 h-5 text-indigo-500" /> : null;
+                    case ActivityType.FOOD: return Utensils ? <Utensils className="w-5 h-5 text-orange-500" /> : null;
+                    case ActivityType.ACTIVITY: return Camera ? <Camera className="w-5 h-5 text-emerald-500" /> : null;
+                    case ActivityType.TRANSPORT: return Car ? <Car className="w-5 h-5 text-slate-500" /> : null;
+                    case ActivityType.SHOPPING: return ShoppingBag ? <ShoppingBag className="w-5 h-5 text-pink-500" /> : null;
+                    default: return Info ? <Info className="w-5 h-5 text-gray-400" /> : null;
+                }
+            };
+
+            const getActivityColor = (type) => {
+                switch (type) {
+                    case ActivityType.FLIGHT: return 'bg-sky-50 border-sky-100';
+                    case ActivityType.HOTEL: return 'bg-indigo-50 border-indigo-100';
+                    case ActivityType.FOOD: return 'bg-orange-50 border-orange-100';
+                    case ActivityType.ACTIVITY: return 'bg-emerald-50 border-emerald-100';
+                    case ActivityType.TRANSPORT: return 'bg-slate-50 border-slate-200';
+                    case ActivityType.SHOPPING: return 'bg-pink-50 border-pink-100';
+                    default: return 'bg-white border-gray-100';
+                }
+            };
+
+            const handleSave = () => {
+                if (isMarkedForDelete) {
+                    if (onDelete) {
+                        onDelete(item.id);
+                    }
+                } else {
+                    if (onSave) {
+                        onSave(editedItem);
+                    }
+                }
+                setIsEditing(false);
+                setIsMarkedForDelete(false);
+            };
+
+            const handleCancel = () => {
+                setEditedItem(item);
+                setIsMarkedForDelete(false);
+                setIsEditing(false);
+            };
+
+            if (isEditing) {
+                return (
+                    <div className={`relative flex flex-col sm:flex-row gap-4 p-4 rounded-xl border-2 shadow-lg transition-all duration-300 ${isMarkedForDelete ? 'bg-rose-50 border-rose-200' : 'bg-white border-pink-200'}`}>
+                        {showAutoSave && (
+                            <div className="absolute top-2 right-14 text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 animate-pulse">
+                                已自動儲存
+                            </div>
+                        )}
+                        
+                        {/* Time Column (Edit) */}
+                        {!isMarkedForDelete && (
+                            <div className="flex-shrink-0 w-full sm:w-16 pt-1 flex flex-col sm:items-center items-start gap-2">
+                                <label className="text-xs font-bold text-slate-400 sm:hidden">時間</label>
+                                <input 
+                                    type="text" 
+                                    value={editedItem.time}
+                                    onChange={(e) => updateField('time', e.target.value)}
+                                    className="w-full sm:w-16 p-1 border border-slate-300 rounded text-sm font-bold text-slate-700 text-center focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none"
+                                />
+                                <div className="p-2 bg-white rounded-full shadow-sm border border-slate-100 hidden sm:block">
+                                    {getActivityIcon(editedItem.type)}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Content Column (Edit) */}
+                        <div className="flex-grow space-y-3">
+                            {isMarkedForDelete ? (
+                                <div className="flex flex-col items-center justify-center h-full py-4 text-rose-500">
+                                    {Trash2 && <Trash2 className="w-8 h-8 mb-2" />}
+                                    <span className="font-bold">此行程將被刪除</span>
+                                    <span className="text-sm opacity-75">請點擊「確認刪除」以移除此項目，或點擊「復原」取消。</span>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="space-y-2">
+                                        <select
+                                            value={editedItem.type}
+                                            onChange={(e) => updateField('type', e.target.value)}
+                                            className="px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 cursor-pointer w-full sm:w-auto"
+                                        >
+                                            <option value={ActivityType.FLIGHT}>✈️ 班機 / 機場</option>
+                                            <option value={ActivityType.HOTEL}>🛏️ 住宿 / 飯店</option>
+                                            <option value={ActivityType.FOOD}>🍴 餐飲 / 美食</option>
+                                            <option value={ActivityType.ACTIVITY}>📷 觀光 / 活動</option>
+                                            <option value={ActivityType.TRANSPORT}>🚗 交通 / 租車</option>
+                                            <option value={ActivityType.SHOPPING}>🛍️ 購物 / 商場</option>
+                                        </select>
+                                        <input 
+                                            type="text" 
+                                            value={editedItem.title}
+                                            onChange={(e) => updateField('title', e.target.value)}
+                                            className="w-full p-2 border border-slate-300 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none"
+                                            placeholder="行程標題"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {MapPin && <MapPin className="w-4 h-4 text-slate-400 shrink-0" />}
+                                        <input 
+                                            type="text" 
+                                            value={editedItem.location || ''}
+                                            onChange={(e) => updateField('location', e.target.value)}
+                                            className="flex-grow p-1.5 border border-slate-300 rounded text-sm text-slate-600 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none"
+                                            placeholder="地點 (選填)"
+                                        />
+                                    </div>
+                                    <textarea 
+                                        value={editedItem.description || ''}
+                                        onChange={(e) => updateField('description', e.target.value)}
+                                        className="w-full p-2 border border-slate-300 rounded-lg text-sm text-slate-600 leading-relaxed focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none min-h-[60px]"
+                                        placeholder="備註說明..."
+                                    />
+                                </>
+                            )}
+                            
+                            <div className="flex justify-between items-center pt-2">
+                                {onDelete && !isMarkedForDelete && (
+                                    <button 
+                                        onClick={() => setIsMarkedForDelete(true)}
+                                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                        title="刪除行程"
+                                    >
+                                        {Trash2 && <Trash2 className="w-4 h-4" />}
+                                        刪除
+                                    </button>
+                                )}
+                                {isMarkedForDelete && (
+                                    <button 
+                                        onClick={() => setIsMarkedForDelete(false)}
+                                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
+                                    >
+                                        {RefreshCcw && <RefreshCcw className="w-4 h-4" />}
+                                        復原
+                                    </button>
+                                )}
+                                <div className="flex gap-2 ml-auto">
+                                    <button 
+                                        onClick={handleCancel}
+                                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
+                                    >
+                                        {X && <X className="w-4 h-4" />}
+                                        取消
+                                    </button>
+                                    <button 
+                                        onClick={handleSave}
+                                        className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white rounded-lg shadow-sm transition-colors ${
+                                            isMarkedForDelete 
+                                            ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-200' 
+                                            : 'bg-pink-400 hover:bg-pink-500 shadow-pink-200'
+                                        }`}
+                                    >
+                                        {isMarkedForDelete ? (Trash2 && <Trash2 className="w-4 h-4" />) : (Save && <Save className="w-4 h-4" />)}
+                                        {isMarkedForDelete ? '確認刪除' : '儲存'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className={`group relative flex flex-col sm:flex-row gap-4 p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${getActivityColor(item.type)}`}>
+                    {/* Time Column */}
+                    <div className="flex-shrink-0 w-16 pt-1 flex flex-col items-center sm:items-start">
+                        <span className="text-lg font-bold text-slate-700">{item.time}</span>
+                        <div className="mt-2 p-2 bg-white rounded-full shadow-sm border border-slate-100">
+                            {getActivityIcon(item.type)}
+                        </div>
+                    </div>
+
+                    {/* Content Column */}
+                    <div className="flex-grow">
+                        <h3 className="text-lg font-bold text-slate-800 pr-8">{item.title}</h3>
+                        {item.location && (
+                            <div className="flex items-center text-sm text-slate-500 mt-1">
+                                <span className="font-medium mr-1">📍</span> {item.location}
+                            </div>
+                        )}
+                        {item.description && (
+                            <p className="text-slate-600 mt-2 text-sm leading-relaxed">{item.description}</p>
+                        )}
+
+                        {/* Google Maps Action */}
+                        {item.location && (
+                            <div className="mt-3 flex items-start">
+                                <a 
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-100/50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
+                                >
+                                    {MapPin && <MapPin className="w-3 h-3" />}
+                                    開啟 Google 地圖
+                                    {ExternalLink && <ExternalLink className="w-3 h-3 ml-0.5 opacity-50" />}
+                                </a>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Edit Button - ALWAYS VISIBLE - Black Background */}
+                    {onSave && (
+                        <button 
+                            onClick={() => setIsEditing(true)}
+                            className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-black text-white hover:bg-slate-800 rounded-full transition-all shadow-md z-10"
+                            title="編輯行程"
+                        >
+                            {Pencil && <Pencil className="w-3.5 h-3.5" />}
+                            <span className="text-xs font-bold">編輯</span>
+                        </button>
+                    )}
+                </div>
+            );
+        };
+
+        // ExpenseTracker Component
+        const ExpenseTracker = ({ expenses, onAddExpense, onEditExpense, onDeleteExpense, travelers }) => {
+            const [isModalOpen, setIsModalOpen] = useState(false);
+            const [editingId, setEditingId] = useState(null);
+            
+            // Exchange Rate
+            const [exchangeRate, setExchangeRate] = useState(() => {
+                const saved = localStorage.getItem('exchangeRate');
+                return saved ? parseFloat(saved) : 0.21;
+            });
+            const [isEditingRate, setIsEditingRate] = useState(false);
+            const [tempRate, setTempRate] = useState(exchangeRate.toString());
+            const rateInputRef = useRef(null);
+
+            useEffect(() => {
+                localStorage.setItem('exchangeRate', exchangeRate.toString());
+            }, [exchangeRate]);
+
+            // Sync exchange rate across tabs
+            useEffect(() => {
+                const handleStorageChange = (e) => {
+                    if (e.key === 'exchangeRate' && e.newValue) {
+                        const newRate = parseFloat(e.newValue);
+                        if (!isNaN(newRate)) {
+                            setExchangeRate(prev => (prev === newRate ? prev : newRate));
+                        }
+                    }
+                };
+                window.addEventListener('storage', handleStorageChange);
+                return () => window.removeEventListener('storage', handleStorageChange);
+            }, []);
+
+            useEffect(() => {
+                if (isEditingRate && rateInputRef.current) {
+                    rateInputRef.current.focus();
+                    rateInputRef.current.select();
+                }
+            }, [isEditingRate]);
+
+            // Delete Confirm Modal
+            const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, id: null });
+            
+            const [formData, setFormData] = useState({
+                title: '',
+                amount: '',
+                payer: travelers[0],
+                involved: [...travelers],
+            });
+
+            // Statistics
+            const stats = useMemo(() => {
+                const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+                const balances = {};
+                travelers.forEach(t => balances[t] = 0);
+
+                expenses.forEach(expense => {
+                    balances[expense.payer] += expense.amount;
+                    const splitAmount = expense.amount / expense.involved.length;
+                    expense.involved.forEach(person => {
+                        balances[person] -= splitAmount;
+                    });
+                });
+
+                return { total, balances };
+            }, [expenses, travelers]);
+
+            const handleOpenAdd = () => {
+                setEditingId(null);
+                setFormData({
+                    title: '',
+                    amount: '',
+                    payer: travelers[0],
+                    involved: [...travelers],
+                });
+                setIsModalOpen(true);
+            };
+
+            const handleOpenEdit = (expense) => {
+                setEditingId(expense.id);
+                setFormData({
+                    title: expense.title,
+                    amount: expense.amount.toString(),
+                    payer: expense.payer,
+                    involved: expense.involved,
+                });
+                setIsModalOpen(true);
+            };
+
+            const saveExchangeRate = () => {
+                const newRate = parseFloat(tempRate);
+                if (!isNaN(newRate) && newRate > 0) {
+                    setExchangeRate(newRate);
+                    setIsEditingRate(false);
+                } else {
+                    setTempRate(exchangeRate.toString());
+                    setIsEditingRate(false);
+                }
+            };
+
+            const handleRateKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    saveExchangeRate();
+                } else if (e.key === 'Escape') {
+                    setTempRate(exchangeRate.toString());
+                    setIsEditingRate(false);
+                }
+            };
+
+            const handleListDelete = (e, id) => {
+                e.stopPropagation();
+                setDeleteConfirm({ isOpen: true, id });
+            };
+
+            const handleEditModalDeleteTrigger = () => {
+                if (editingId) {
+                    setDeleteConfirm({ isOpen: true, id: editingId });
+                }
+            };
+
+            const confirmDeleteAction = () => {
+                if (deleteConfirm.id) {
+                    onDeleteExpense(deleteConfirm.id);
+                    // If we are deleting the item currently being edited in the modal
+                    if (deleteConfirm.id === editingId) {
+                        setIsModalOpen(false);
+                        setEditingId(null);
+                    }
+                    setDeleteConfirm({ isOpen: false, id: null });
+                }
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!formData.title || !formData.amount) return;
+
+                const expenseData = {
+                    id: editingId || Date.now().toString(),
+                    title: formData.title,
+                    amount: parseFloat(formData.amount),
+                    payer: formData.payer,
+                    involved: formData.involved,
+                    date: editingId ? (expenses.find(e => e.id === editingId)?.date || new Date().toISOString()) : new Date().toISOString(),
+                    category: ActivityType.FOOD
+                };
+
+                if (editingId) {
+                    onEditExpense(expenseData);
+                } else {
+                    onAddExpense(expenseData);
+                }
+
+                setIsModalOpen(false);
+            };
+
+            const toggleInvolved = (person) => {
+                setFormData(prev => {
+                    const isIn = prev.involved.includes(person);
+                    if (isIn && prev.involved.length === 1) return prev;
+                    return {
+                        ...prev,
+                        involved: isIn 
+                            ? prev.involved.filter(p => p !== person)
+                            : [...prev.involved, person]
+                    };
+                });
+            };
+
+            const formatDate = (dateStr) => {
+                const d = new Date(dateStr);
+                return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}`;
+            };
+
+            return (
+                <div className="max-w-3xl mx-auto space-y-6 pb-24">
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="relative bg-gradient-to-br from-pink-400 to-rose-400 rounded-2xl p-6 text-white shadow-lg overflow-hidden group">
+                            {/* Exchange Rate Badge */}
+                            <div className="absolute top-4 right-4">
+                                {isEditingRate ? (
+                                    <div className="flex items-center gap-1 bg-white rounded px-1 py-0.5">
+                                        <input
+                                            ref={rateInputRef}
+                                            type="number"
+                                            step="0.001"
+                                            value={tempRate}
+                                            onChange={(e) => setTempRate(e.target.value)}
+                                            onKeyDown={handleRateKeyDown}
+                                            onBlur={saveExchangeRate}
+                                            className="w-16 text-xs font-bold text-slate-800 bg-transparent outline-none text-right"
+                                        />
+                                        <button onMouseDown={(e) => e.preventDefault()} onClick={saveExchangeRate} className="text-emerald-500">
+                                            {Check && <Check className="w-3 h-3" />}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button 
+                                        onClick={() => {
+                                            setTempRate(exchangeRate.toString());
+                                            setIsEditingRate(true);
+                                        }}
+                                        className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium flex items-center gap-1 hover:bg-white/20 transition-colors"
+                                        title="點擊修改匯率"
+                                    >
+                                        {RefreshCcw && <RefreshCcw className="w-3 h-3" />}
+                                        匯率 {exchangeRate}
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-3 mb-2 opacity-90">
+                                {Wallet && <Wallet className="w-5 h-5" />}
+                                <span className="text-sm font-medium tracking-wide">總支出</span>
+                            </div>
+                            <div className="text-4xl font-bold tracking-tight">
+                                ¥{stats.total.toLocaleString()}
+                            </div>
+                            <div className="text-lg font-medium text-pink-50 mt-1">
+                                ≈ NT${Math.round(stats.total * exchangeRate).toLocaleString()}
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-white/20 text-sm opacity-90">
+                                平均每人: ¥{Math.round(stats.total / travelers.length).toLocaleString()}
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                            <div className="flex items-center gap-2 mb-4 text-slate-500">
+                                {Users && <Users className="w-5 h-5" />}
+                                <span className="text-sm font-medium">分帳狀態</span>
+                            </div>
+                            <div className="space-y-4">
+                                {travelers.map(person => {
+                                    const balance = stats.balances[person];
+                                    const isOwed = balance > 0;
+                                    return (
+                                        <div key={person} className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                 <div className="w-8 h-8 rounded-full bg-pink-100 text-pink-600 font-fredoka font-bold flex items-center justify-center text-sm border-2 border-white shadow-sm">
+                                                    {person}
+                                                 </div>
+                                                 <span className="font-medium text-slate-700">{person}</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className={`block font-bold text-lg leading-none ${Math.abs(balance) < 1 ? 'text-slate-400' : isOwed ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                    {Math.abs(balance) < 1 
+                                                        ? '已結清' 
+                                                        : `${isOwed ? '應收' : '應付'} ¥${Math.abs(Math.round(balance)).toLocaleString()}`}
+                                                </span>
+                                                {Math.abs(balance) >= 1 && (
+                                                    <span className={`text-xs font-medium ${isOwed ? 'text-emerald-600/70' : 'text-rose-600/70'}`}>
+                                                        ≈ NT${Math.round(Math.abs(balance) * exchangeRate).toLocaleString()}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Transaction List */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-stone-50/50">
+                            <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                                {Receipt && <Receipt className="w-5 h-5 text-slate-400" />}
+                                最近紀錄
+                            </h3>
+                        </div>
+                        <div className="divide-y divide-slate-100">
+                            {expenses.length === 0 ? (
+                                <div className="p-8 text-center text-slate-400">
+                                    尚無消費紀錄，點擊下方按鈕新增。
+                                </div>
+                            ) : (
+                                expenses.slice().reverse().map(expense => {
+                                    // Highlight the row if it's being deleted
+                                    const isBeingDeleted = deleteConfirm.id === expense.id;
+                                    return (
+                                        <div 
+                                            key={expense.id} 
+                                            className={`w-full hover:bg-slate-50 transition-colors flex items-stretch group ${isBeingDeleted ? 'bg-rose-50 ring-2 ring-inset ring-rose-100' : ''}`}
+                                        >
+                                            <div 
+                                                className="flex-grow p-4 flex items-center justify-between cursor-pointer"
+                                                onClick={() => handleOpenEdit(expense)}
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 group-hover:bg-pink-100 group-hover:text-pink-600 transition-colors">
+                                                        {DollarSign && <DollarSign className="w-5 h-5" />}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                                            {expense.title}
+                                                            {Pencil && <Pencil className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                                                        </h4>
+                                                        <div className="text-xs text-slate-500 mt-0.5">
+                                                            <span className="font-medium text-slate-700">{expense.payer}</span> 先付
+                                                            <span className="mx-1">•</span>
+                                                            {expense.involved.length === travelers.length ? '全員分攤' : `${expense.involved.join(', ')} 分攤`}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="font-bold text-slate-800">¥{expense.amount.toLocaleString()}</div>
+                                                    <div className="text-xs font-semibold text-emerald-600/80">
+                                                        ≈ NT${Math.round(expense.amount * exchangeRate).toLocaleString()}
+                                                    </div>
+                                                    <div className="text-xs text-slate-400 mt-0.5 font-mono">
+                                                        {formatDate(expense.date)}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center pr-4 border-l border-slate-50">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => handleListDelete(e, expense.id)}
+                                                    className={`p-2 rounded-full transition-colors ${isBeingDeleted ? 'text-rose-600 bg-rose-100' : 'text-rose-400 bg-rose-50/50 hover:bg-rose-100 hover:text-rose-600'}`}
+                                                    title="刪除紀錄"
+                                                >
+                                                    {Trash2 && <Trash2 className="w-5 h-5" />}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    </div>
+
+                    {/* FAB */}
+                    <button
+                        onClick={handleOpenAdd}
+                        className="fixed bottom-6 right-6 w-14 h-14 bg-blue-500 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40"
+                    >
+                        {Plus && <Plus className="w-7 h-7" />}
+                    </button>
+
+                    {/* Add/Edit Modal */}
+                    {isModalOpen && (
+                        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+                            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                    <h3 className="font-bold text-lg text-slate-800">
+                                        {editingId ? '編輯消費' : '新增消費'}
+                                    </h3>
+                                    <button onClick={() => setIsModalOpen(false)} className="p-1 hover:bg-slate-200 rounded-full text-slate-500">
+                                        {X && <X className="w-5 h-5" />}
+                                    </button>
+                                </div>
+                                
+                                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                                    <div>
+                                        <div className="flex justify-between items-end mb-2">
+                                             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">金額 (日幣)</label>
+                                             <span className="text-xs font-semibold text-emerald-600">
+                                                約 NT$ {formData.amount ? Math.round(parseFloat(formData.amount) * exchangeRate).toLocaleString() : '0'}
+                                             </span>
+                                        </div>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">¥</span>
+                                            <input 
+                                                type="number" 
+                                                autoFocus={!editingId}
+                                                required
+                                                value={formData.amount}
+                                                onChange={e => setFormData({...formData, amount: e.target.value})}
+                                                className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-8 pr-4 text-2xl font-bold text-slate-800 focus:outline-none focus:border-pink-400 transition-colors placeholder:text-slate-300"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">項目名稱</label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            value={formData.title}
+                                            onChange={e => setFormData({...formData, title: e.target.value})}
+                                            className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 px-4 text-slate-800 font-medium focus:outline-none focus:border-pink-400 transition-colors"
+                                            placeholder="例如：晚餐、交通費"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">誰先付錢？</label>
+                                            <div className="space-y-2">
+                                                {TRAVELERS.map(person => (
+                                                    <button
+                                                        type="button"
+                                                        key={person}
+                                                        onClick={() => setFormData({...formData, payer: person})}
+                                                        className={`w-full py-2 px-3 rounded-lg text-sm font-medium border-2 transition-all flex items-center justify-between ${
+                                                            formData.payer === person 
+                                                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700' 
+                                                            : 'border-slate-100 text-slate-500 hover:border-slate-200'
+                                                        }`}
+                                                    >
+                                                        <span className="font-fredoka">{person}</span>
+                                                        {formData.payer === person && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">分給誰？</label>
+                                            <div className="space-y-2">
+                                                {TRAVELERS.map(person => (
+                                                    <button
+                                                        type="button"
+                                                        key={person}
+                                                        onClick={() => toggleInvolved(person)}
+                                                        className={`w-full py-2 px-3 rounded-lg text-sm font-medium border-2 transition-all flex items-center justify-between ${
+                                                            formData.involved.includes(person)
+                                                            ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                                                            : 'border-slate-100 text-slate-400 hover:border-slate-200'
+                                                        }`}
+                                                    >
+                                                        <span className="font-fredoka">{person}</span>
+                                                        {formData.involved.includes(person) && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 pt-2">
+                                        {editingId && (
+                                             <button 
+                                                type="button"
+                                                onClick={handleEditModalDeleteTrigger}
+                                                className="flex-1 bg-white border-2 border-rose-100 text-rose-500 hover:bg-rose-50 font-bold py-4 rounded-xl active:scale-95 transition-all flex items-center justify-center gap-2"
+                                            >
+                                                {Trash2 && <Trash2 className="w-5 h-5" />}
+                                                刪除
+                                            </button>
+                                        )}
+                                        <button 
+                                            type="submit"
+                                            className="flex-[2] bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            {editingId ? (Pencil && <Pencil className="w-5 h-5" />) : (Plus && <Plus className="w-5 h-5" />)}
+                                            {editingId ? '更新紀錄' : '新增紀錄'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Delete Confirmation Modal */}
+                    {deleteConfirm.isOpen && (
+                        <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 animate-in fade-in duration-200">
+                            <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl scale-100 transform transition-all">
+                                <div className="p-6 text-center">
+                                    <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500">
+                                        {AlertTriangle && <AlertTriangle className="w-8 h-8" />}
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-800 mb-2">確定要刪除嗎？</h3>
+                                    <p className="text-slate-500 text-sm">此動作無法復原，這筆消費紀錄將會永久移除。</p>
+                                </div>
+                                <div className="p-4 bg-slate-50 flex gap-3">
+                                    <button 
+                                        onClick={() => setDeleteConfirm({ isOpen: false, id: null })}
+                                        className="flex-1 py-3 text-slate-600 font-bold bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                                    >
+                                        取消
+                                    </button>
+                                    <button 
+                                        onClick={confirmDeleteAction}
+                                        className="flex-1 py-3 text-white font-bold bg-rose-500 rounded-xl hover:bg-rose-600 shadow-lg shadow-rose-200 transition-colors"
+                                    >
+                                        確認刪除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Main App Component
+        const App = () => {
+            const [activeDayIndex, setActiveDayIndex] = useState(0);
+            const [activeTab, setActiveTab] = useState('itinerary');
+            
+            // Expenses State
+            const [expenses, setExpenses] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('okinawa_expenses');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    return [];
+                }
+            });
+            
+            // Itinerary State
+            const [itineraryData, setItineraryData] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('okinawa_itinerary');
+                    return saved ? JSON.parse(saved) : ITINERARY_DATA;
+                } catch (e) {
+                    return ITINERARY_DATA;
+                }
+            });
+
+            const activeDay = itineraryData[activeDayIndex];
+
+            useEffect(() => {
+                localStorage.setItem('okinawa_expenses', JSON.stringify(expenses));
+            }, [expenses]);
+
+            useEffect(() => {
+                localStorage.setItem('okinawa_itinerary', JSON.stringify(itineraryData));
+            }, [itineraryData]);
+
+            // Real-time synchronization for itinerary and expenses across tabs
+            useEffect(() => {
+                const handleStorageChange = (e) => {
+                    if (e.key === 'okinawa_expenses' && e.newValue) {
+                        try {
+                            const newExpenses = JSON.parse(e.newValue);
+                            setExpenses(prev => {
+                                // Prevent update if data is identical to avoid loop
+                                if (JSON.stringify(prev) === e.newValue) return prev;
+                                return newExpenses;
+                            });
+                        } catch(err) { console.error(err); }
+                    }
+                    if (e.key === 'okinawa_itinerary' && e.newValue) {
+                        try {
+                            const newItinerary = JSON.parse(e.newValue);
+                            setItineraryData(prev => {
+                                 if (JSON.stringify(prev) === e.newValue) return prev;
+                                 return newItinerary;
+                            });
+                        } catch(err) { console.error(err); }
+                    }
+                };
+                window.addEventListener('storage', handleStorageChange);
+                return () => window.removeEventListener('storage', handleStorageChange);
+            }, []);
+
+            const handleUpdateItineraryItem = (updatedItem) => {
+                setItineraryData(prev => prev.map((day, index) => {
+                    if (index !== activeDayIndex) return day;
+                    return {
+                        ...day,
+                        items: day.items.map(item => item.id === updatedItem.id ? updatedItem : item)
+                    };
+                }));
+            };
+
+            const handleDeleteItineraryItem = (itemId) => {
+                setItineraryData(prev => prev.map((day, index) => {
+                    if (index !== activeDayIndex) return day;
+                    return {
+                        ...day,
+                        items: day.items.filter(item => item.id !== itemId)
+                    };
+                }));
+            };
+
+            const handleAddItineraryItem = () => {
+                const newItem = {
+                    id: Date.now().toString(),
+                    time: '09:00',
+                    title: '新行程',
+                    type: ActivityType.ACTIVITY,
+                    description: '',
+                    location: ''
+                };
+
+                setItineraryData(prev => prev.map((day, index) => {
+                    if (index !== activeDayIndex) return day;
+                    return {
+                        ...day,
+                        items: [...day.items, newItem].sort((a, b) => a.time.localeCompare(b.time))
+                    };
+                }));
+            };
+
+            const handleAddExpense = (newExpense) => {
+                setExpenses(prev => [...prev, newExpense]);
+            };
+
+            const handleEditExpense = (updatedExpense) => {
+                setExpenses(prev => prev.map(e => e.id === updatedExpense.id ? updatedExpense : e));
+            };
+
+            const handleDeleteExpense = (id) => {
+                setExpenses(prev => prev.filter(e => e.id !== id));
+            };
+
+            const handleResetData = () => {
+                if (window.confirm('確定要重置所有資料回到預設值嗎？\n這將刪除所有您自訂的行程修改與記帳紀錄。')) {
+                    localStorage.removeItem('okinawa_itinerary');
+                    localStorage.removeItem('okinawa_expenses');
+                    localStorage.removeItem('exchangeRate');
+                    window.location.reload();
+                }
+            };
+
+            return (
+                <div className="min-h-screen pb-20 bg-stone-50">
+                    {/* Hero Header */}
+                    <div className="relative h-64 bg-gradient-to-r from-pink-300 to-rose-400 overflow-hidden">
+                        <img 
+                            src="https://picsum.photos/1200/400?grayscale&blur=2" 
+                            alt="Okinawa Background" 
+                            className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div className="relative max-w-5xl mx-auto px-4 h-full flex flex-col justify-end pb-8 text-white">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="px-3 py-1 bg-pink-100 text-pink-800 text-xs font-bold rounded-full uppercase tracking-wider">
+                                    即將到來的旅程
+                                </span>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">沖繩 2025</h1>
+                            <div className="flex flex-wrap gap-4 text-sm md:text-base opacity-90 font-light">
+                                <span className="flex items-center gap-1">{Calendar && <Calendar className="w-4 h-4"/>} 12月18日 - 12月22日</span>
+                                <span className="flex items-center gap-1">{MapPin && <MapPin className="w-4 h-4"/>} 沖繩本島</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <main className="max-w-5xl mx-auto px-4 -mt-8 relative z-10">
+                        {/* Main Tab Switcher */}
+                        <div className="bg-white rounded-t-xl shadow-sm border-b border-slate-100 flex overflow-hidden mx-2 sm:mx-0">
+                            <button 
+                                onClick={() => setActiveTab('itinerary')}
+                                className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                                    activeTab === 'itinerary' 
+                                    ? 'text-pink-500 bg-white border-b-2 border-pink-500' 
+                                    : 'text-slate-400 bg-slate-50 hover:bg-slate-100 hover:text-slate-600'
+                                }`}
+                            >
+                                {List && <List className="w-4 h-4" />}
+                                行程表
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('expenses')}
+                                className={`flex-1 py-4 font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                                    activeTab === 'expenses' 
+                                    ? 'text-emerald-600 bg-white border-b-2 border-emerald-600' 
+                                    : 'text-slate-400 bg-slate-50 hover:bg-slate-100 hover:text-slate-600'
+                                }`}
+                            >
+                                {Wallet && <Wallet className="w-4 h-4" />}
+                                分帳紀錄
+                            </button>
+                        </div>
+
+                        <div className="bg-white rounded-b-xl shadow-xl border border-t-0 border-slate-100 overflow-hidden min-h-[600px]">
+                            {activeTab === 'itinerary' ? (
+                                <>
+                                    {/* Day Selector */}
+                                    <div className="bg-white sticky top-0 z-20 border-b border-slate-200">
+                                        <div className="flex overflow-x-auto scrollbar-hide max-w-3xl mx-auto md:px-0">
+                                            {itineraryData.map((day, index) => (
+                                                <button
+                                                    key={day.date}
+                                                    onClick={() => setActiveDayIndex(index)}
+                                                    className={`flex-shrink-0 px-6 py-4 text-sm font-medium transition-all duration-200 border-b-2 ${
+                                                        activeDayIndex === index 
+                                                        ? 'border-pink-400 text-pink-700 bg-pink-50/50' 
+                                                        : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                                                    }`}
+                                                >
+                                                    {day.displayDate}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Timeline Content */}
+                                    <div className="p-4 md:p-8 bg-pink-50/10 min-h-[500px]">
+                                        <div className="max-w-3xl mx-auto">
+                                            <div className="flex items-center justify-between mb-8">
+                                                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                                                    {activeDay.displayDate}
+                                                    <span className="text-sm font-normal text-slate-500 bg-white px-2 py-1 rounded-md border border-slate-200">
+                                                        {activeDay.items.length} 個行程
+                                                    </span>
+                                                </h2>
+                                            </div>
+
+                                            <div className="space-y-6 relative">
+                                                {/* Vertical Timeline Line */}
+                                                <div className="absolute left-8 top-4 bottom-4 w-0.5 bg-slate-200 hidden sm:block"></div>
+
+                                                {activeDay.items.map((item) => (
+                                                    <EventCard 
+                                                        key={item.id} 
+                                                        item={item} 
+                                                        onSave={handleUpdateItineraryItem}
+                                                        onDelete={handleDeleteItineraryItem}
+                                                    />
+                                                ))}
+
+                                                {/* Add Button */}
+                                                <button 
+                                                    onClick={handleAddItineraryItem}
+                                                    className="w-full py-4 mt-4 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold hover:border-pink-400 hover:text-pink-600 hover:bg-pink-50 transition-all flex items-center justify-center gap-2 group"
+                                                >
+                                                    <div className="p-1 rounded-full bg-slate-100 group-hover:bg-pink-100 transition-colors">
+                                                        {Plus && <Plus className="w-5 h-5" />}
+                                                    </div>
+                                                    新增行程
+                                                </button>
+                                                
+                                                {/* End of Day Marker */}
+                                                <div className="flex items-center gap-4 text-slate-400 pt-8 sm:ml-16 justify-center sm:justify-start">
+                                                    <div className="h-px bg-slate-200 flex-grow max-w-[100px]"></div>
+                                                    <span className="text-xs uppercase tracking-widest font-medium">今日結束</span>
+                                                    <div className="h-px bg-slate-200 flex-grow max-w-[100px]"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="p-4 md:p-8 bg-stone-50 min-h-[500px]">
+                                    <ExpenseTracker 
+                                        expenses={expenses} 
+                                        onAddExpense={handleAddExpense}
+                                        onEditExpense={handleEditExpense}
+                                        onDeleteExpense={handleDeleteExpense}
+                                        travelers={TRAVELERS}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </main>
+
+                    <footer className="mt-12 py-8 text-center text-slate-400 text-sm">
+                        <p className="mb-2">© 2025 沖繩旅遊規劃 (Okinawa Trip Planner). 使用 React & Tailwind 建置.</p>
+                        <button 
+                            onClick={handleResetData}
+                            className="text-xs text-slate-300 underline hover:text-rose-400 transition-colors"
+                        >
+                            重置所有資料
+                        </button>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
